@@ -36,8 +36,13 @@ def main():
 
     # Iterate over projects.
     projects = gl.projects.list(all=True, visibility=args.visibility)
-    del_members_count = 0
+    groups = gl.groups.list(all=True, visibility=args.visibility)
+
+    del_members_projects_count = 0
+    del_members_groups_count = 0
     del_projects_count = 0
+    del_groups_count = 0
+
     for p in projects:
         print(f'Project "{p.name_with_namespace}" (id={p.id}) :',
               end='')
@@ -52,15 +57,38 @@ def main():
             del_projects_count += 1
             for m in members:
                 print(f' delete {m.username} (id={m.id})', end='')
-                del_members_count += 1
+                del_members_projects_count += 1
+                if not args.dry:
+                    m.delete()
+                    pass
+        print()
+
+    for g in groups:
+        print(f'Group "{g.name}" (id={g.id}) :',
+              end='')
+
+        # Query members.
+        members = g.members.all(query=args.query, all=True)
+
+        # Delete members.
+        if len(members) == 0:
+            print(' no users to delete', end='')
+        else:
+            del_groups_count += 1
+            for m in members:
+                print(f' delete {m.username} (id={m.id})', end='')
+                del_members_groups_count += 1
                 if not args.dry:
                     m.delete()
                     pass
         print()
 
     # Statistics.
-    print(f'{del_members_count} members deleted '
+    print(f'{del_members_projects_count} members deleted '
           f'in {del_projects_count} repositories')
+          
+    print(f'{del_members_groups_count} members deleted '
+          f'in {del_groups_count} groups')
 
 
 if __name__ == '__main__':
