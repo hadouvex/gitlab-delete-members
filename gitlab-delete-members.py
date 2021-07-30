@@ -59,8 +59,11 @@ def main():
                 print(f' delete {m.username} (id={m.id})', end='')
                 del_members_projects_count += 1
                 if not args.dry:
-                    m.delete()
-                    pass
+                    try:
+                        m.delete()
+                        pass
+                    except:
+                        print(" / ! Error occured but probably nothing to worry about...")
         print()
 
     for g in groups:
@@ -79,8 +82,11 @@ def main():
                 print(f' delete {m.username} (id={m.id})', end='')
                 del_members_groups_count += 1
                 if not args.dry:
-                    m.delete()
-                    pass
+                    try:
+                        m.delete()
+                        pass
+                    except:
+                        print(" / ! Error occured but probably nothing to worry about...")
         print()
 
     # Statistics.
